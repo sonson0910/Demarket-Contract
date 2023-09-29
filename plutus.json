@@ -1,0 +1,83 @@
+{
+  "preamble": {
+    "title": "demarket/contract",
+    "description": "Aiken contracts for project 'demarket/contract'",
+    "version": "0.0.0",
+    "plutusVersion": "v2",
+    "license": "Apache-2.0"
+  },
+  "validators": [
+    {
+      "title": "contract.contract",
+      "datum": {
+        "title": "datum",
+        "schema": {
+          "$ref": "#/definitions/contract~1Datum"
+        }
+      },
+      "redeemer": {
+        "title": "_redeemer",
+        "schema": {
+          "$ref": "#/definitions/Void"
+        }
+      },
+      "compiledCode": "590275010000323232323232323232323222232533300932323232323232323253330123370e90010008991919299980a8008a5113253330163370e9000180a800899198020069bae33013301501248018c05000458c8cc004004018894ccc068004530103d87a80001323253330193370e64646464a66603a66e1d20020011480004c8dd69811800980d801180d80099299980e19b87480080045300103d87a800013232323300100100222533302300114c103d87a800013232323253330243371e9110000213374a9000198141ba80014bd700998030030019bad3025003375c6046004604e004604a0026eacc088004c068008c068004c8cc004004008894ccc07c004530103d87a800013232323253330203371e9110000213374a9000198121ba60014bd700998030030019bab3021003375c603e004604600460420026eaccc054c05c0092002375a6602a602e0289004099ba548000cc0740092f5c0266008008002603c0046038002660020146eb8cc040c04803d2004223322323300100100322533301c00114a026464a66603666e3c00801452889980200200098100011bae301e0013758660226026004900800098080030a5030100053758602a002602a0026028002601600660220026022004601e002600e0042930b19299980499b87480000044c8c8c8c8c8c8c8c8c8c8c8c94ccc060c06c00852616375a603200260320046eb4c05c004c05c008dd7180a800980a8011bae30130013013002375c602200260220046eb8c03c004c01c01058c01c00ccc0040052000222233330073370e0020060184666600a00a66e000112002300e001002002230053754002460066ea80055cd2ab9d5573caae7d5d02ba157441",
+      "hash": "7d74328d0f97e9c79bdf61e8a7f44f9e516545ef315e7b9a7f4b2f73"
+    }
+  ],
+  "definitions": {
+    "ByteArray": {
+      "dataType": "bytes"
+    },
+    "Int": {
+      "dataType": "integer"
+    },
+    "Void": {
+      "title": "Unit",
+      "description": "The nullary constructor.",
+      "anyOf": [
+        {
+          "dataType": "constructor",
+          "index": 0,
+          "fields": []
+        }
+      ]
+    },
+    "contract/Datum": {
+      "title": "Datum",
+      "anyOf": [
+        {
+          "title": "Datum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "policyId",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "assetName",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "seller",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "buyer",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "price",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "royalties",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
