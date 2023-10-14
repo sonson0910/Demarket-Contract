@@ -18,7 +18,8 @@ const lucid = await Lucid.new(
     "Preview",
 );
 
-lucid.selectWalletFromPrivateKey(await Deno.readTextFile("./owner.sk"));
+// lucid.selectWalletFromPrivateKey(await Deno.readTextFile("./owner.sk"));
+const wallet = lucid.selectWalletFromSeed(await Deno.readTextFile("./owner.seed"));
 
 const beneficiaryPublicKeyHash = lucid.utils.getAddressDetails(
     await lucid.wallet.address()
@@ -47,14 +48,15 @@ const Datum = Data.Object({
     policyId: Data.String,
     assetName: Data.String,
     seller: Data.String,
-    buyer: Data.String,
+    // buyer: Data.String,
     price: Data.BigInt,
+    royalties: Data.BigInt,
 });
 
 type Datum = Data.Static<typeof Datum>;
 
-const policyId = "84bbdb23ad326e42ee70540ec8c33a5b433c2e1c54f8a0bea3c45ac0";
-const assetName = "000de14061696b656e";
+const policyId = "5d89cfe7f925691d132bc001cd4c13f4c7be03c3977027b68378640a";
+const assetName = "000de1404769726c4242";
 
 
 let UTOut;
@@ -89,7 +91,7 @@ if (utxos.length === 0) {
 // we don't have any redeemer in our contract but it needs to be empty
 const redeemer = Data.empty();
 
-const txUnlock = await unlock(utxos, UTOut, { from: validator, using: redeemer });
+const txUnlock = await unlock(utxos, { from: validator, using: redeemer });
 // console.log(1);
 
 await lucid.awaitTx(txUnlock);
@@ -100,15 +102,13 @@ console.log(`NFT recovered from the contract
 `);
 
 
-async function unlock(utxos, UTOut, { from, using }): Promise<TxHash> {
-    console.log(BigInt(UTOut.price));
+async function unlock(utxos, { from, using }): Promise<TxHash> {
     const tx = await lucid
         .newTx()
         .collectFrom(utxos, using)
         .addSigner(await lucid.wallet.address())
         .attachSpendingValidator(from)
         .complete();
-    // console.log(BigInt(UTOut.price));
 
 
     const signedTx = await tx

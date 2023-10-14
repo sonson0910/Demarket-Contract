@@ -18,7 +18,8 @@ const lucid = await Lucid.new(
     "Preview",
 );
 
-lucid.selectWalletFromPrivateKey(await Deno.readTextFile("./beneficiary.sk"));
+// lucid.selectWalletFromPrivateKey(await Deno.readTextFile("./beneficiary.sk"));
+const wallet = lucid.selectWalletFromSeed(await Deno.readTextFile("./beneficiary.seed"));
 
 const beneficiaryPublicKeyHash = lucid.utils.getAddressDetails(
     await lucid.wallet.address()
@@ -47,15 +48,15 @@ const Datum = Data.Object({
     policyId: Data.String,
     assetName: Data.String,
     seller: Data.String, 
-    buyer: Data.String,
+    // buyer: Data.String,
     price: Data.BigInt,
     royalties: Data.BigInt,
 });
 
 type Datum = Data.Static<typeof Datum>;
 
-const policyId = "84bbdb23ad326e42ee70540ec8c33a5b433c2e1c54f8a0bea3c45ac0";
-const assetName = "000de14061696b656e";
+const policyId = "5d89cfe7f925691d132bc001cd4c13f4c7be03c3977027b68378640a";
+const assetName = "000de1404769726c4242";
 
 let UTOut;
 
@@ -106,9 +107,9 @@ async function unlock(utxos, UTOut, { from, using }): Promise<TxHash> {
         .payToAddress("addr_test1vqhs6zag6mfkr8qj8l59sh5mfx7g0ay6hc8qfza6y8mzp9c3henpx", { lovelace: UTOut.price })
         .payToAddress("addr_test1qpkxr3kpzex93m646qr7w82d56md2kchtsv9jy39dykn4cmcxuuneyeqhdc4wy7de9mk54fndmckahxwqtwy3qg8pums5vlxhz", { lovelace: UTOut.royalties })
         .collectFrom(utxos, using)
-        .addSigner(await lucid.wallet.address())
         .attachSpendingValidator(from)
         .complete();
+        // .addSigner(await lucid.wallet.address())
 
     console.log(1)
 

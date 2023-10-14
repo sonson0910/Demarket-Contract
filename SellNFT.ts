@@ -19,7 +19,8 @@ const lucid = await Lucid.new(
     "Preview",
 );
 
-const wallet = lucid.selectWalletFromPrivateKey(await Deno.readTextFile("./owner.sk"));
+// const wallet = lucid.selectWalletFromPrivateKey(await Deno.readTextFile("./owner.sk"));
+const wallet = lucid.selectWalletFromSeed(await Deno.readTextFile("./owner.seed"));
 
 const validator = await readValidator();
 
@@ -36,7 +37,7 @@ const ownerPublicKeyHash = lucid.utils.getAddressDetails(
 ).paymentCredential.hash;
 
 const beneficiaryPublicKeyHash =
-    lucid.utils.getAddressDetails("addr_test1vqzm7agsc3hmzzcmakfd77h3eag2xnh3gneagcs8n8nvusc5nz6zw")
+    lucid.utils.getAddressDetails("addr_test1qqcxrwktpurgvrqt28xr5ha039j7ga59x33wp0r8dzkt4zysckcur8c2yu2975qwvtcg3gn73rf3v5e3wz0yaffkx7use04tnu")
         .paymentCredential.hash;
 // --------------------------------------------------------------------------
 
@@ -45,7 +46,7 @@ const Datum = Data.Object({
     policyId: Data.String,
     assetName: Data.String,
     seller: Data.String, 
-    buyer: Data.String,
+    // buyer: Data.String,
     price: Data.BigInt,
     royalties: Data.BigInt,
 });
@@ -55,15 +56,15 @@ type Datum = Data.Static<typeof Datum>;
 const Price = 100000000n;
 const royalties = BigInt(parseInt(Price) * 1 / 100);
 
-const policyId = "84bbdb23ad326e42ee70540ec8c33a5b433c2e1c54f8a0bea3c45ac0";
-const assetName = "000de14061696b656e";
+const policyId = "5d89cfe7f925691d132bc001cd4c13f4c7be03c3977027b68378640a";
+const assetName = "000de1404769726c4242";
 
 const datum = Data.to<Datum>(
     {
         policyId: policyId,
         assetName: assetName,
         seller: ownerPublicKeyHash, // our own wallet verification key hash
-        buyer: beneficiaryPublicKeyHash,
+        // buyer: beneficiaryPublicKeyHash,
         price: Price,
         royalties: royalties,
     },
