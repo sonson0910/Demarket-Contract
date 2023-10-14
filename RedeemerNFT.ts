@@ -49,6 +49,7 @@ const Datum = Data.Object({
     assetName: Data.String,
     seller: Data.String,
     // buyer: Data.String,
+    author: Data.String,
     price: Data.BigInt,
     royalties: Data.BigInt,
 });

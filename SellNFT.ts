@@ -36,9 +36,13 @@ const ownerPublicKeyHash = lucid.utils.getAddressDetails(
     await lucid.wallet.address()
 ).paymentCredential.hash;
 
-const beneficiaryPublicKeyHash =
-    lucid.utils.getAddressDetails("addr_test1qqcxrwktpurgvrqt28xr5ha039j7ga59x33wp0r8dzkt4zysckcur8c2yu2975qwvtcg3gn73rf3v5e3wz0yaffkx7use04tnu")
+const authorPublicKeyHash =
+    lucid.utils.getAddressDetails("addr_test1vqhs6zag6mfkr8qj8l59sh5mfx7g0ay6hc8qfza6y8mzp9c3henpx")
         .paymentCredential.hash;
+
+// const beneficiaryPublicKeyHash =
+//     lucid.utils.getAddressDetails("addr_test1qqcxrwktpurgvrqt28xr5ha039j7ga59x33wp0r8dzkt4zysckcur8c2yu2975qwvtcg3gn73rf3v5e3wz0yaffkx7use04tnu")
+//         .paymentCredential.hash;
 // --------------------------------------------------------------------------
 
 
@@ -47,6 +51,7 @@ const Datum = Data.Object({
     assetName: Data.String,
     seller: Data.String, 
     // buyer: Data.String,
+    author: Data.String,
     price: Data.BigInt,
     royalties: Data.BigInt,
 });
@@ -65,6 +70,7 @@ const datum = Data.to<Datum>(
         assetName: assetName,
         seller: ownerPublicKeyHash, // our own wallet verification key hash
         // buyer: beneficiaryPublicKeyHash,
+        author: authorPublicKeyHash,
         price: Price,
         royalties: royalties,
     },

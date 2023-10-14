@@ -49,6 +49,7 @@ const Datum = Data.Object({
     assetName: Data.String,
     seller: Data.String, 
     // buyer: Data.String,
+    author: Data.String,
     price: Data.BigInt,
     royalties: Data.BigInt,
 });
@@ -104,8 +105,8 @@ async function unlock(utxos, UTOut, { from, using }): Promise<TxHash> {
     console.log(BigInt(UTOut.price));
     const tx = await lucid
         .newTx()
-        .payToAddress("addr_test1vqhs6zag6mfkr8qj8l59sh5mfx7g0ay6hc8qfza6y8mzp9c3henpx", { lovelace: UTOut.price })
-        .payToAddress("addr_test1qpkxr3kpzex93m646qr7w82d56md2kchtsv9jy39dykn4cmcxuuneyeqhdc4wy7de9mk54fndmckahxwqtwy3qg8pums5vlxhz", { lovelace: UTOut.royalties })
+        .payToAddress("addr_test1qpkxr3kpzex93m646qr7w82d56md2kchtsv9jy39dykn4cmcxuuneyeqhdc4wy7de9mk54fndmckahxwqtwy3qg8pums5vlxhz", { lovelace: UTOut.price })
+        .payToAddress("addr_test1vqhs6zag6mfkr8qj8l59sh5mfx7g0ay6hc8qfza6y8mzp9c3henpx", { lovelace: UTOut.royalties })
         .collectFrom(utxos, using)
         .attachSpendingValidator(from)
         .complete();
