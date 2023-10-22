@@ -2,12 +2,12 @@ use aiken/hash.{Blake2b_224, Hash}
 use aiken/transaction/credential.{Address, VerificationKey, from_verification_key}
 use aiken/list
 use aiken/transaction.{Transaction, ScriptContext, Spend, Output}
-use aiken/transaction/value.{lovelace_of}
+use aiken/transaction/value.{PolicyId, AssetName, lovelace_of}
 
 
 type Datum {
-  policyId: VerificationKeyHash,
-  assetName: VerificationKeyHash,
+  policyId: PolicyId,
+  assetName: AssetName,
   seller: VerificationKeyHash,
   // buyer: VerificationKeyHash,
   author: VerificationKeyHash,
