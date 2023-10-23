@@ -61,8 +61,8 @@ type Datum = Data.Static<typeof Datum>;
 const Price = 100000000n;
 const royalties = BigInt(parseInt(Price) * 1 / 100);
 
-const policyId = "5d89cfe7f925691d132bc001cd4c13f4c7be03c3977027b68378640a";
-const assetName = "000de1404769726c4242";
+const policyId = "895d03411c0094facf70330f35cddeedf177165377e480ce307c12ae";
+const assetName = "000de1404e4654203134";
 
 const datum = Data.to<Datum>(
     {
