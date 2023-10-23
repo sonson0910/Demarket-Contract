@@ -2,7 +2,7 @@
   "preamble": {
     "title": "demarket/contract",
     "description": "Aiken contracts for project 'demarket/contract'",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "plutusVersion": "v2",
     "license": "Apache-2.0"
   },

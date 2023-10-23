@@ -1,9 +1,9 @@
-use aiken/hash.{Blake2b_224, Hash}
-use aiken/transaction/credential.{Address, VerificationKey, from_verification_key}
+use aiken/transaction/credential.{from_verification_key}
 use aiken/list
-use aiken/transaction.{Transaction, ScriptContext, Spend, Output}
-use aiken/transaction/value.{PolicyId, AssetName, lovelace_of}
-
+use aiken/transaction.{Transaction, ScriptContext, Spend}
+use aiken/transaction/value.{PolicyId, AssetName}
+use contract/utils.{check_amount, check_address, must_be_signed_by, check_all}
+use contract/types.{VerificationKeyHash}
 
 type Datum {
   policyId: PolicyId,
@@ -13,9 +13,6 @@ type Datum {
   price: Int,
   royalties: Int, 
 }
-
-type VerificationKeyHash = 
-    Hash<Blake2b_224, VerificationKey>
     
 validator {
   fn contract(datum: Datum, _redeemer: Void, ctx: ScriptContext) {
@@ -52,24 +49,24 @@ validator {
   }
 }
 
-fn check_amount(output: Output, price: Int) -> Bool {
-  lovelace_of(output.value) == price
-}
+// fn check_amount(output: Output, price: Int) -> Bool {
+//   lovelace_of(output.value) == price
+// }
 
-fn check_address(output: Output, address: Address) -> Bool {
-  output.address.payment_credential == address.payment_credential
-}
+// fn check_address(output: Output, address: Address) -> Bool {
+//   output.address.payment_credential == address.payment_credential
+// }
 
-fn must_be_signed_by(transaction: Transaction, vk: VerificationKeyHash) {
-  list.has(transaction.extra_signatories, vk)
-}
+// fn must_be_signed_by(transaction: Transaction, vk: VerificationKeyHash) {
+//   list.has(transaction.extra_signatories, vk)
+// }
 
 
-fn check_all(output_seller: Option<Output>, output_author: Option<Output>) -> Bool {
-  if output_seller == None || output_author == None {
-    trace @"Mot trong 2 cai khong ton tai"
-    False
-  }else{
-    True
-  }
-}
+// fn check_all(output_seller: Option<Output>, output_author: Option<Output>) -> Bool {
+//   if output_seller == None || output_author == None {
+//     trace @"Mot trong 2 cai khong ton tai"
+//     False
+//   }else{
+//     True
+//   }
+// }
