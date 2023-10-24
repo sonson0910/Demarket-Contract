@@ -1,7 +1,7 @@
 use aiken/transaction/credential.{from_verification_key}
 use aiken/list
 use aiken/transaction.{Transaction, ScriptContext, Spend}
-use aiken/transaction/value.{PolicyId, AssetName}
+use aiken/transaction/value.{PolicyId, AssetName, lovelace_of}
 use contract/utils.{check_amount, check_address, must_be_signed_by, check_all}
 use contract/types.{VerificationKeyHash}
 
@@ -30,7 +30,7 @@ validator {
           False -> {
             let output_seller = list.find(outputs, 
               fn(output) {
-                check_amount(output, datum.price) &&
+                lovelace_of(output.value)>= datum.price &&
                 check_address(output, from_verification_key(datum.seller))
               }
             )
