@@ -1,8 +1,7 @@
 use aiken/transaction/credential.{from_verification_key}
-use aiken/list
 use aiken/transaction.{Transaction, ScriptContext, Spend}
-use aiken/transaction/value.{PolicyId, AssetName, lovelace_of}
-use contract/utils.{check_amount, check_address, must_be_signed_by, check_all}
+use aiken/transaction/value.{PolicyId, AssetName}
+use contract/utils.{must_be_signed_by, check_all, find_output, check_price_duplicate, check_address_duplicate}
 use contract/types.{VerificationKeyHash}
 
 type Datum {
@@ -28,45 +27,27 @@ validator {
         when seller_sign is {
           True -> True
           False -> {
-            let output_seller = list.find(outputs, 
-              fn(output) {
-                lovelace_of(output.value)>= datum.price &&
-                check_address(output, from_verification_key(datum.seller))
-              }
-            )
+            let output_seller = find_output(outputs, datum.price, from_verification_key(datum.seller))
 
-            let output_author = list.find(outputs, 
-              fn(output) {
-                check_amount(output, datum.royalties) &&
-                check_address(output, from_verification_key(datum.author))
+            let output_author = find_output(outputs, datum.royalties, from_verification_key(datum.author))
+
+            when check_all(output_seller, output_author) is{
+              True -> {
+                expect Some(out_sell) = find_output(outputs, datum.price, from_verification_key(datum.seller))
+
+                expect Some(out_royal) = find_output(outputs, datum.royalties, from_verification_key(datum.author))
+
+                if check_address_duplicate(out_sell, out_royal) {
+                  check_price_duplicate(out_sell, out_royal)
+                } else {
+                  True
+                }
               }
-            )
-            check_all(output_seller, output_author)
+              False -> False
+            }
           }
         }
       _ -> False
     }
   }
 }
-
-// fn check_amount(output: Output, price: Int) -> Bool {
-//   lovelace_of(output.value) == price
-// }
-
-// fn check_address(output: Output, address: Address) -> Bool {
-//   output.address.payment_credential == address.payment_credential
-// }
-
-// fn must_be_signed_by(transaction: Transaction, vk: VerificationKeyHash) {
-//   list.has(transaction.extra_signatories, vk)
-// }
-
-
-// fn check_all(output_seller: Option<Output>, output_author: Option<Output>) -> Bool {
-//   if output_seller == None || output_author == None {
-//     trace @"Mot trong 2 cai khong ton tai"
-//     False
-//   }else{
-//     True
-//   }
-// }
