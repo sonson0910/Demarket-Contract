@@ -1,8 +1,23 @@
-use aiken/transaction/credential.{from_verification_key}
-use aiken/transaction.{Transaction, ScriptContext, Spend}
-use aiken/transaction/value.{PolicyId, AssetName}
-use contract/utils.{must_be_signed_by, check_all, find_output, check_price_duplicate, check_address_duplicate}
-use contract/types.{VerificationKeyHash}
+use aiken/transaction/credential
+    .{ from_verification_key }
+use aiken/transaction
+    .{ Transaction
+    ,  ScriptContext
+    ,  Spend }
+use aiken/transaction/value
+    .{ PolicyId
+    ,  AssetName }
+use contract/utils
+    .{ must_be_signed_by
+    ,  check_none
+    ,  find_output
+    ,  check_price_duplicate
+    ,  check_address_duplicate }
+use contract/types
+    .{ VerificationKeyHash }
+use contract/constants
+    .{ demarket_addr
+    ,  demarket_pct }
 
 type Datum {
   policyId: PolicyId,
@@ -27,11 +42,18 @@ validator {
         when seller_sign is {
           True -> True
           False -> {
+            let demarket_fee: Int = demarket_pct * datum.price / 100
+
             let output_seller = find_output(outputs, datum.price, from_verification_key(datum.seller))
 
             let output_author = find_output(outputs, datum.royalties, from_verification_key(datum.author))
 
-            when check_all(output_seller, output_author) is{
+            let output_demarket = find_output(outputs, demarket_fee, demarket_addr())
+
+            let check_none_output = check_none(output_seller, output_author, output_demarket)
+            
+
+            when check_none_output is{
               True -> {
                 expect Some(out_sell) = find_output(outputs, datum.price, from_verification_key(datum.seller))
 

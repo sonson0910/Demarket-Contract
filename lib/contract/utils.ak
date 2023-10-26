@@ -1,8 +1,13 @@
-use aiken/transaction/credential.{Address}
+use aiken/transaction/credential
+    .{ Address }
 use aiken/list
-use aiken/transaction.{Transaction, Output}
-use aiken/transaction/value.{lovelace_of}
-use contract/types.{VerificationKeyHash}
+use aiken/transaction
+    .{ Transaction
+    ,  Output }
+use aiken/transaction/value
+    .{ lovelace_of }
+use contract/types
+    .{ VerificationKeyHash }
 
 pub fn check_amount(output: Output, price: Int) -> Bool {
   lovelace_of(output.value) >= price
@@ -17,9 +22,8 @@ pub fn must_be_signed_by(transaction: Transaction, vk: VerificationKeyHash) {
 }
 
 
-pub fn check_all(output_seller: Option<Output>, output_author: Option<Output>) -> Bool {
-  if output_seller == None || output_author == None {
-    trace @"Mot trong 2 cai khong ton tai"
+pub fn check_none(output_seller: Option<Output>, output_author: Option<Output>, output_demarket: Option<Output>) -> Bool {
+  if output_seller == None || output_author == None || output_demarket == None{
     False
   }else{
     True
