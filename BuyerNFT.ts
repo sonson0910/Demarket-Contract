@@ -51,7 +51,7 @@ const scriptAddress = lucid.utils.validatorToAddress(validator);
 const Datum = Data.Object({
     policyId: Data.String,
     assetName: Data.String,
-    seller: Data.String, 
+    seller: Data.String,
     author: Data.String,
     price: Data.BigInt,
     royalties: Data.BigInt,
@@ -60,8 +60,10 @@ const Datum = Data.Object({
 type Datum = Data.Static<typeof Datum>;
 
 // Du lieu cua NFT de loc ra UTxO chua NFT do
-const policyId = "1d33beb371d0c7e81450251da24703aecb09f1dbe2b3389895896a55";
+const policyId = "aaabb0206b0be1f1fd0ee2066bcad049b059d301d6df96b6ec1894dd";
 const assetName = "4e46542044454d4f";
+
+
 
 // Lay ra datum cua UTxO chua NFT can mua
 let UTOut;
@@ -73,7 +75,7 @@ const scriptUtxos = await lucid.utxosAt(scriptAddress);
 const utxos = scriptUtxos.filter((utxo) => {
     try {
         // Do du lieu datum ra bien temp cua UTxO hien tai
-        const temp = Data.from<Datum>(utxo.datum, Datum); 
+        const temp = Data.from<Datum>(utxo.datum, Datum);
 
         // Kiem tra xem UTxO do co that su dang chua NFT dang can mua khong?
         if (temp.policyId === policyId && temp.assetName === assetName) {
@@ -94,16 +96,19 @@ if (utxos.length === 0) {
     Deno.exit(1);
 }
 
+const exchange_fee = BigInt(parseInt(UTOut.price) * 1 / 100);
+
 // Hop dong khong dung redeemer nhung cai nay bat buoc phai co nen khoi tao rong
 const redeemer = Data.empty();
 
 // Ham mo khoa tai san len hop dong
-async function unlock(utxos, UTOut, { from, using }): Promise<TxHash> {
+async function unlock(utxos, UTOut, exchange_fee, { from, using }): Promise<TxHash> {
     console.log(BigInt(UTOut.price));
     // Khoi tao giao dich
-    const tx = await lucid 
+    const tx = await lucid
         .newTx()
         .payToAddress("addr_test1qpkxr3kpzex93m646qr7w82d56md2kchtsv9jy39dykn4cmcxuuneyeqhdc4wy7de9mk54fndmckahxwqtwy3qg8pums5vlxhz", { lovelace: UTOut.price }) // Gui tien cho nguoi ban
+        .payToAddress("addr_test1qqayue6h7fxemhdktj9w7cxsnxv40vm9q3f7temjr7606s3j0xykpud5ms6may9d6rf34mgwxqv75rj89zpfdftn0esq3pcfjg", { lovelace: exchange_fee }) // Phi san
         .payToAddress("addr_test1vqhs6zag6mfkr8qj8l59sh5mfx7g0ay6hc8qfza6y8mzp9c3henpx", { lovelace: UTOut.royalties }) // Gui tien cho nguoi mua
         .collectFrom(utxos, using) // Tieu thu UTxO (Lay NFT co tren hop dong ve vi)
         .attachSpendingValidator(from) // Tham chieu den hop dong, neu duoc xac nhan, moi dau ra se duoc thuc thi
@@ -121,7 +126,7 @@ async function unlock(utxos, UTOut, { from, using }): Promise<TxHash> {
 }
 
 // Thuc thi giao dich mua tai san co tren hop dong
-const txUnlock = await unlock(utxos, UTOut, { from: validator, using: redeemer });
+const txUnlock = await unlock(utxos, UTOut, exchange_fee, { from: validator, using: redeemer });
 console.log(1);
 
 // Thoi gian cho den khi giao dich duoc xac nhan tren Blockchain

@@ -53,7 +53,7 @@ const authorPublicKeyHash =
 const Datum = Data.Object({
     policyId: Data.String,
     assetName: Data.String,
-    seller: Data.String, 
+    seller: Data.String,
     author: Data.String,
     price: Data.BigInt,
     royalties: Data.BigInt,
@@ -64,7 +64,7 @@ type Datum = Data.Static<typeof Datum>;
 // Cac du lieu can cho truong datum (public key cua nguoi ban va tac gia o tren)
 const Price = 100000000n;
 const royalties = BigInt(parseInt(Price) * 1 / 100);
-const policyId = "1d33beb371d0c7e81450251da24703aecb09f1dbe2b3389895896a55";
+const policyId = "aaabb0206b0be1f1fd0ee2066bcad049b059d301d6df96b6ec1894dd";
 const assetName = "4e46542044454d4f";
 
 // Truyen du lieu vao datum
@@ -72,7 +72,7 @@ const datum = Data.to<Datum>(
     {
         policyId: policyId,
         assetName: assetName,
-        seller: ownerPublicKeyHash, 
+        seller: ownerPublicKeyHash,
         author: authorPublicKeyHash,
         price: Price,
         royalties: royalties,
@@ -89,7 +89,7 @@ async function lock(NFT, { into, datum }): Promise<TxHash> {
     // Doc dia chi hop dong tu bien validator
     const contractAddress = lucid.utils.validatorToAddress(into);
     console.log(contractAddress);
-    
+
     // Tao giao dich
     const tx = await lucid
         .newTx()
@@ -97,10 +97,10 @@ async function lock(NFT, { into, datum }): Promise<TxHash> {
         .complete();
 
     // Ki giao dich
-    const signedTx = await tx.sign().complete(); 
+    const signedTx = await tx.sign().complete();
 
     // Gui giao dich len onchain
-    return signedTx.submit(); 
+    return signedTx.submit();
 }
 
 // Khoa tai san len hop dong
