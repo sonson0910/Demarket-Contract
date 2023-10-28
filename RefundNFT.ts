@@ -20,9 +20,13 @@ const lucid = await Lucid.new(
     "Preview",
 );
 
-// Chon vi nguoi mua
-const wallet = lucid.selectWalletFromSeed(await Deno.readTextFile("./beneficiary.seed"));
+// Chon vi nguoi ban NFT
+const wallet = lucid.selectWalletFromSeed(await Deno.readTextFile("./owner.seed"));
 
+// Public key nguoi ban
+const beneficiaryPublicKeyHash = lucid.utils.getAddressDetails(
+    await lucid.wallet.address()
+).paymentCredential.hash;
 
 // Ham doc validator tu file plutus.json
 async function readValidator(): Promise<SpendingValidator> {
@@ -33,19 +37,15 @@ async function readValidator(): Promise<SpendingValidator> {
     };
 }
 
-// Public key nguoi mua
-const beneficiaryPublicKeyHash = lucid.utils.getAddressDetails(
-    await lucid.wallet.address()
-).paymentCredential.hash;
-
 // Doc validator va gan vao mot bien
 const validator = await readValidator();
 
 // ---------------------------------------------------
-
 // Doc dia chi hop dong tu bien validator
 const scriptAddress = lucid.utils.validatorToAddress(validator);
 
+// we get all the UTXOs sitting at the script address
+const scriptUtxos = await lucid.utxosAt(scriptAddress);
 
 // Khoi tao doi tuong cua Datum
 const Datum = Data.Object({
@@ -59,17 +59,12 @@ const Datum = Data.Object({
 
 type Datum = Data.Static<typeof Datum>;
 
-// Du lieu cua NFT de loc ra UTxO chua NFT do
-const policyId = "aaabb0206b0be1f1fd0ee2066bcad049b059d301d6df96b6ec1894dd";
-const assetName = "4e46542044454d4f";
-
-
+// Du lieu cua NFT de loc ra UTxO chua NFT can lay ve
+const policyId = "e96b0d9a84fd55c57d734d3eff7afea31a71835bfe0f841d1f1ba470";
+const assetName = "44656d61726b6574";
 
 // Lay ra datum cua UTxO chua NFT can mua
 let UTOut;
-
-// Lay ra toan bo UTxO co tren dia chi hop dong
-const scriptUtxos = await lucid.utxosAt(scriptAddress);
 
 // Loc ra UTxO chua NFT can mua 
 const utxos = scriptUtxos.filter((utxo) => {
@@ -82,6 +77,7 @@ const utxos = scriptUtxos.filter((utxo) => {
             UTOut = Data.from<Datum>(utxo.datum, Datum); // Lay datum cua UTxO do ra mot bien
             return true; // UTxO do da duoc lay
         }
+
         return false; // UTxO do khong duoc chon 
     } catch (e) {
         return false; // UTxO do khong duoc chon 
@@ -96,38 +92,29 @@ if (utxos.length === 0) {
     Deno.exit(1);
 }
 
-const exchange_fee = BigInt(parseInt(UTOut.price) * 1 / 100);
 
 // Hop dong khong dung redeemer nhung cai nay bat buoc phai co nen khoi tao rong
 const redeemer = Data.empty();
 
 // Ham mo khoa tai san len hop dong
-async function unlock(utxos, UTOut, exchange_fee, { from, using }): Promise<TxHash> {
-    console.log(BigInt(UTOut.price));
-    // Khoi tao giao dich
-    const tx = await lucid
+async function unlock(utxos, { from, using }): Promise<TxHash> {
+    const tx = await lucid // Khoi tao giao dich
         .newTx()
-        .payToAddress("addr_test1qpkxr3kpzex93m646qr7w82d56md2kchtsv9jy39dykn4cmcxuuneyeqhdc4wy7de9mk54fndmckahxwqtwy3qg8pums5vlxhz", { lovelace: UTOut.price }) // Gui tien cho nguoi ban
-        .payToAddress("addr_test1qqayue6h7fxemhdktj9w7cxsnxv40vm9q3f7temjr7606s3j0xykpud5ms6may9d6rf34mgwxqv75rj89zpfdftn0esq3pcfjg", { lovelace: exchange_fee }) // Phi san
-        .payToAddress("addr_test1vqhs6zag6mfkr8qj8l59sh5mfx7g0ay6hc8qfza6y8mzp9c3henpx", { lovelace: UTOut.royalties }) // Gui tien cho nguoi mua
         .collectFrom(utxos, using) // Tieu thu UTxO (Lay NFT co tren hop dong ve vi)
+        .addSigner(await lucid.wallet.address()) // Them chu ki tu nguoi ban
         .attachSpendingValidator(from) // Tham chieu den hop dong, neu duoc xac nhan, moi dau ra se duoc thuc thi
         .complete();
-
-    console.log(1)
 
     // Ki giao dich
     const signedTx = await tx
         .sign()
         .complete();
-
     // Gui giao dich len onchain
     return signedTx.submit();
 }
 
-// Thuc thi giao dich mua tai san co tren hop dong
-const txUnlock = await unlock(utxos, UTOut, exchange_fee, { from: validator, using: redeemer });
-console.log(1);
+// Thuc thi lay lai tai san da ban co tren hop dong
+const txUnlock = await unlock(utxos, { from: validator, using: redeemer });
 
 // Thoi gian cho den khi giao dich duoc xac nhan tren Blockchain
 await lucid.awaitTx(txUnlock);

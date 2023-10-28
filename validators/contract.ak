@@ -54,21 +54,27 @@ validator {
             
 
             when check_none_output is{
+
               True -> {
+
                 expect Some(out_sell) = find_output(outputs, datum.price, from_verification_key(datum.seller))
 
                 expect Some(out_royal) = find_output(outputs, datum.royalties, from_verification_key(datum.author))
 
                 if check_address_duplicate(out_sell, out_royal) {
+
                   check_price_duplicate(out_sell, out_royal)
                 } else {
+
                   True
                 }
               }
+
               False -> False
             }
           }
         }
+        
       _ -> False
     }
   }
