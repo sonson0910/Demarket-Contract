@@ -60,8 +60,8 @@ const Datum = Data.Object({
 type Datum = Data.Static<typeof Datum>;
 
 // Du lieu cua NFT de loc ra UTxO chua NFT can lay ve
-const policyId = "e96b0d9a84fd55c57d734d3eff7afea31a71835bfe0f841d1f1ba470";
-const assetName = "44656d61726b6574";
+const policyId = "d8db13a077b4fd63b5560e9cea7e39f0b11a67eeb89f5e3df9a45d0a";
+const assetName = "4e46542044454d4f";
 
 // Lay ra datum cua UTxO chua NFT can mua
 let UTOut;

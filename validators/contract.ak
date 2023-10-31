@@ -1,5 +1,8 @@
 use aiken/transaction/credential
     .{ from_verification_key }
+use aiken/list
+    .{ filter
+    ,  length }
 use aiken/transaction
     .{ Transaction
     ,  ScriptContext
@@ -11,8 +14,8 @@ use contract/utils
     .{ must_be_signed_by
     ,  check_none
     ,  find_output
-    ,  check_price_duplicate
-    ,  check_address_duplicate }
+    ,  check_address
+    ,  check_amount }
 use contract/types
     .{ VerificationKeyHash }
 use contract/constants
@@ -57,15 +60,27 @@ validator {
 
               True -> {
 
-                expect Some(out_sell) = find_output(outputs, datum.price, from_verification_key(datum.seller))
+                if datum.seller == datum.author {
+                  let list_out = filter(outputs, 
+                    fn(output) { 
+                      check_address(output, from_verification_key(datum.seller)) && 
+                      check_amount(output, datum.royalties) 
+                    }
+                  )
+                  
+                  if length(list_out) >= 2 {
 
-                expect Some(out_royal) = find_output(outputs, datum.royalties, from_verification_key(datum.author))
+                    let list_seller = filter(list_out, 
+                      fn(output) { 
+                        check_amount(output, datum.price) 
+                      }
+                    )
 
-                if check_address_duplicate(out_sell, out_royal) {
-
-                  check_price_duplicate(out_sell, out_royal)
-                } else {
-
+                    length(list_seller) >= 1
+                  }else{
+                    False
+                  }
+                }else{
                   True
                 }
               }

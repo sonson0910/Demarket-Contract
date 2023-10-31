@@ -43,7 +43,7 @@ const ownerPublicKeyHash = lucid.utils.getAddressDetails(
 
 // Public key nguoi tao ra NFT
 const authorPublicKeyHash =
-    lucid.utils.getAddressDetails("addr_test1vqhs6zag6mfkr8qj8l59sh5mfx7g0ay6hc8qfza6y8mzp9c3henpx")
+    lucid.utils.getAddressDetails("addr_test1qpkxr3kpzex93m646qr7w82d56md2kchtsv9jy39dykn4cmcxuuneyeqhdc4wy7de9mk54fndmckahxwqtwy3qg8pums5vlxhz")
         .paymentCredential.hash;
 
 
@@ -64,7 +64,7 @@ type Datum = Data.Static<typeof Datum>;
 // Cac du lieu can cho truong datum (public key cua nguoi ban va tac gia o tren)
 const Price = 100000000n;
 const royalties = BigInt(parseInt(Price) * 1 / 100);
-const policyId = "aaabb0206b0be1f1fd0ee2066bcad049b059d301d6df96b6ec1894dd";
+const policyId = "d8db13a077b4fd63b5560e9cea7e39f0b11a67eeb89f5e3df9a45d0a";
 const assetName = "4e46542044454d4f";
 
 // Truyen du lieu vao datum
