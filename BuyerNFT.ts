@@ -60,7 +60,7 @@ const Datum = Data.Object({
 type Datum = Data.Static<typeof Datum>;
 
 // Du lieu cua NFT de loc ra UTxO chua NFT do
-const policyId = "aaabb0206b0be1f1fd0ee2066bcad049b059d301d6df96b6ec1894dd";
+const policyId = "d8db13a077b4fd63b5560e9cea7e39f0b11a67eeb89f5e3df9a45d0a";
 const assetName = "4e46542044454d4f";
 
 
@@ -109,7 +109,7 @@ async function unlock(utxos, UTOut, exchange_fee, { from, using }): Promise<TxHa
         .newTx()
         .payToAddress("addr_test1qpkxr3kpzex93m646qr7w82d56md2kchtsv9jy39dykn4cmcxuuneyeqhdc4wy7de9mk54fndmckahxwqtwy3qg8pums5vlxhz", { lovelace: UTOut.price }) // Gui tien cho nguoi ban
         .payToAddress("addr_test1qqayue6h7fxemhdktj9w7cxsnxv40vm9q3f7temjr7606s3j0xykpud5ms6may9d6rf34mgwxqv75rj89zpfdftn0esq3pcfjg", { lovelace: exchange_fee }) // Phi san
-        .payToAddress("addr_test1vqhs6zag6mfkr8qj8l59sh5mfx7g0ay6hc8qfza6y8mzp9c3henpx", { lovelace: UTOut.royalties }) // Gui tien cho nguoi mua
+        .payToAddress("addr_test1qpkxr3kpzex93m646qr7w82d56md2kchtsv9jy39dykn4cmcxuuneyeqhdc4wy7de9mk54fndmckahxwqtwy3qg8pums5vlxhz", { lovelace: UTOut.royalties }) // Gui tien cho nguoi mua
         .collectFrom(utxos, using) // Tieu thu UTxO (Lay NFT co tren hop dong ve vi)
         .attachSpendingValidator(from) // Tham chieu den hop dong, neu duoc xac nhan, moi dau ra se duoc thuc thi
         .complete();
