@@ -62,3 +62,6 @@ const utxos = scriptUtxos.filter((utxo) => {
     console.log(datum)
     console.log("-----------------------------------------------------------")
 });
+
+const redeemer = Data.empty();
+console.log(redeemer)
