@@ -1,55 +1,11 @@
-# contract
+# Demarket SmartContract
 
-Write validators in the `validators` folder, and supporting functions in the `lib` folder using `.ak` as a file extension.
+The **Demarket SmartContract** is a smart contract that binds NFT buying and selling transactions on the NFT demarket exchange
 
-For example, as `validators/always_true.ak`
+## License
 
-```gleam
-validator {
-  fn spend(_datum: Data, _redeemer: Data, _context: Data) -> Bool {
-    True
-  }
-}
-```
+The **emarket SmartContract** is released under the Apache2 License. See the `LICENSE` file for more details.
 
-## Building
+## Contact
 
-```sh
-aiken build
-```
-
-## Testing
-
-You can write tests in any module using the `test` keyword. For example:
-
-```gleam
-test foo() {
-  1 + 1 == 2
-}
-```
-
-To run all tests, simply do:
-
-```sh
-aiken check
-```
-
-To run only tests matching the string `foo`, do:
-
-```sh
-aiken check -m foo
-```
-
-## Documentation
-
-If you're writing a library, you might want to generate an HTML documentation for it.
-
-Use:
-
-```sh
-aiken docs
-```
-
-## Resources
-
-Find more on the [Aiken's user manual](https://aiken-lang.org).
+For any questions or feedback, please contact the project maintainer at `sonlearn155@gmail.com`.
