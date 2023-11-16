@@ -33,3 +33,14 @@ const validator = await readValidator();
 
 const contractAddress = lucid.utils.validatorToAddress(validator);
 console.log(contractAddress);
+
+const Datum = Data.Object({
+    policyId: Data.String,
+    assetName: Data.String,
+    seller: Data.String,
+    author: Data.String,
+    price: Data.BigInt,
+    royalties: Data.BigInt,
+});
+
+type Datum = Data.Static<typeof Datum>;

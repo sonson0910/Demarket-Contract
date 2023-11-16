@@ -8,7 +8,7 @@ import {
     TxHash,
     fromHex,
     toHex,
-} from "https://deno.land/x/lucid@0.8.3/mod.ts";
+} from "https://deno.land/x/lucid@0.8.4/mod.ts";
 import * as cbor from "https://deno.land/x/cbor@v1.4.1/index.js";
 
 // Khoi tao api lucid
@@ -60,8 +60,8 @@ const Datum = Data.Object({
 type Datum = Data.Static<typeof Datum>;
 
 // Du lieu cua NFT de loc ra UTxO chua NFT do
-const policyId = "d8db13a077b4fd63b5560e9cea7e39f0b11a67eeb89f5e3df9a45d0a";
-const assetName = "4e46542044454d4f";
+const policyId = "f6d61e2b83e15ce8ca7645e21ea4e552cad719d36290d07b50477100";
+const assetName = "44656d61726b6574";
 
 
 
@@ -99,7 +99,7 @@ if (utxos.length === 0) {
 const exchange_fee = BigInt(parseInt(UTOut.price) * 1 / 100);
 
 // Hop dong khong dung redeemer nhung cai nay bat buoc phai co nen khoi tao rong
-const redeemer = Data.empty();
+const redeemer = Data.void();
 
 // Ham mo khoa tai san len hop dong
 async function unlock(utxos, UTOut, exchange_fee, { from, using }): Promise<TxHash> {

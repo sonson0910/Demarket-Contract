@@ -64,8 +64,8 @@ type Datum = Data.Static<typeof Datum>;
 // Cac du lieu can cho truong datum (public key cua nguoi ban va tac gia o tren)
 const Price = 100000000n;
 const royalties = BigInt(parseInt(Price) * 1 / 100);
-const policyId = "d8db13a077b4fd63b5560e9cea7e39f0b11a67eeb89f5e3df9a45d0a";
-const assetName = "4e46542044454d4f";
+const policyId = "f6d61e2b83e15ce8ca7645e21ea4e552cad719d36290d07b50477100";
+const assetName = "44656d61726b6574";
 
 // Truyen du lieu vao datum
 const datum = Data.to<Datum>(
