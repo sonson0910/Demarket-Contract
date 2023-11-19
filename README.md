@@ -4,7 +4,7 @@ The **Demarket SmartContract** is a smart contract that binds NFT buying and sel
 
 ## License
 
-The **emarket SmartContract** is released under the Apache2 License. See the `LICENSE` file for more details.
+The **Demarket SmartContract** is released under the Apache2 License. See the `LICENSE` file for more details.
 
 ## Contact
 
