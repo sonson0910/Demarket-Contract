@@ -66,6 +66,7 @@ const Price = 100000000n;
 const royalties = BigInt(parseInt(Price) * 1 / 100);
 const policyId = "f6d61e2b83e15ce8ca7645e21ea4e552cad719d36290d07b50477100";
 const assetName = "44656d61726b6574";
+const fee = royalties + BigInt(parseInt(Price) * 1 / 100);
 
 // Truyen du lieu vao datum
 const datum = Data.to<Datum>(
@@ -85,15 +86,16 @@ const NFT = policyId + assetName;
 console.log(NFT)
 
 // Ham khoa tai san
-async function lock(NFT, { into, datum }): Promise<TxHash> {
+async function lock(NFT, fee, { into, datum }): Promise<TxHash> {
     // Doc dia chi hop dong tu bien validator
     const contractAddress = lucid.utils.validatorToAddress(into);
     console.log(contractAddress);
+    console.log(royalties);
 
     // Tao giao dich
     const tx = await lucid
         .newTx()
-        .payToContract(contractAddress, { inline: datum }, { [NFT]: 1n }) // Gui NFT, datum len hop dong co dia chi da doc o tren
+        .payToContract(contractAddress, { inline: datum }, { [NFT]: 1n, lovelace: fee }) // Gui NFT, datum len hop dong co dia chi da doc o tren
         .complete();
 
     // Ki giao dich
@@ -104,7 +106,7 @@ async function lock(NFT, { into, datum }): Promise<TxHash> {
 }
 
 // Khoa tai san len hop dong
-const txLock = await lock(NFT, { into: validator, datum: datum });
+const txLock = await lock(NFT, fee, { into: validator, datum: datum });
 
 // Thoi gian cho den khi giao dich duoc xac nhan tren Blockchain
 await lucid.awaitTx(txLock);
