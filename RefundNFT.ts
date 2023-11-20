@@ -1,4 +1,4 @@
-// import module tu cac thu vien
+// import modules from libraries
 import {
     Blockfrost,
     C,
@@ -11,7 +11,7 @@ import {
 } from "https://deno.land/x/lucid@0.8.3/mod.ts";
 import * as cbor from "https://deno.land/x/cbor@v1.4.1/index.js";
 
-// Khoi tao api lucid
+// Create the lucid api
 const lucid = await Lucid.new(
     new Blockfrost(
         "https://cardano-preview.blockfrost.io/api/v0",
@@ -20,15 +20,15 @@ const lucid = await Lucid.new(
     "Preview",
 );
 
-// Chon vi nguoi ban NFT
+// Sellect wallet of seller NFT
 const wallet = lucid.selectWalletFromSeed(await Deno.readTextFile("./owner.seed"));
 
-// Public key nguoi ban
+// Public key of the seller
 const beneficiaryPublicKeyHash = lucid.utils.getAddressDetails(
     await lucid.wallet.address()
 ).paymentCredential.hash;
 
-// Ham doc validator tu file plutus.json
+// Function to read validator from plutus.json file
 async function readValidator(): Promise<SpendingValidator> {
     const validator = JSON.parse(await Deno.readTextFile("plutus.json")).validators[0];
     return {
@@ -37,17 +37,17 @@ async function readValidator(): Promise<SpendingValidator> {
     };
 }
 
-// Doc validator va gan vao mot bien
+// Read the validator and assign it to a variable
 const validator = await readValidator();
 
 // ---------------------------------------------------
-// Doc dia chi hop dong tu bien validator
+// Read the contract address from the validator variable
 const scriptAddress = lucid.utils.validatorToAddress(validator);
 
 // we get all the UTXOs sitting at the script address
 const scriptUtxos = await lucid.utxosAt(scriptAddress);
 
-// Khoi tao doi tuong cua Datum
+// Initialize Datum object
 const Datum = Data.Object({
     policyId: Data.String,
     assetName: Data.String,
@@ -59,64 +59,64 @@ const Datum = Data.Object({
 
 type Datum = Data.Static<typeof Datum>;
 
-// Du lieu cua NFT de loc ra UTxO chua NFT can lay ve
+// NFT data to filter out UTxO containing the NFT to be retrieved
 const policyId = "d8db13a077b4fd63b5560e9cea7e39f0b11a67eeb89f5e3df9a45d0a";
 const assetName = "4e46542044454d4f";
 
-// Lay ra datum cua UTxO chua NFT can mua
+// Get the UTxO datum containing the NFT you want to buy
 let UTOut;
 
-// Loc ra UTxO chua NFT can mua 
+// Filter out UTxOs containing NFTs to purchase
 const utxos = scriptUtxos.filter((utxo) => {
     try {
-        // Do du lieu datum ra bien temp cua UTxO hien tai
+        // Pour datum data into the temp variable of the current UTxO
         const temp = Data.from<Datum>(utxo.datum, Datum);
 
-        // Kiem tra xem UTxO do co that su dang chua NFT dang can mua khong?
+        // Check to see if UTxO is currently available as an NFT that can be purchased? Check to see if the UTxO actually contains the NFT you want to buy
         if (temp.policyId === policyId && temp.assetName === assetName) {
-            UTOut = Data.from<Datum>(utxo.datum, Datum); // Lay datum cua UTxO do ra mot bien
-            return true; // UTxO do da duoc lay
+            UTOut = Data.from<Datum>(utxo.datum, Datum); // get the datum of that UTxO into a variable
+            return true; // UTxO is getted
         }
 
-        return false; // UTxO do khong duoc chon 
+        return false; // That UTxO is not selected 
     } catch (e) {
-        return false; // UTxO do khong duoc chon 
+        return false; // That UTxO is not selected
     }
 });
 
 console.log(UTOut)
 
-// Neu khong co UTxO nao duoc chon thi se dung chuong trinh
+// If no UTxO is selected, the program will be used
 if (utxos.length === 0) {
     console.log("No redeemable utxo found. You need to wait a little longer...");
     Deno.exit(1);
 }
 
 
-// Hop dong khong dung redeemer nhung cai nay bat buoc phai co nen khoi tao rong
+// The contract does not use a redeemer, but this is required so it is initialized empty
 const redeemer = Data.empty();
 
-// Ham mo khoa tai san len hop dong
+// function unlocks assets onto the contract
 async function unlock(utxos, { from, using }): Promise<TxHash> {
-    const tx = await lucid // Khoi tao giao dich
+    const tx = await lucid // Initialize transaction
         .newTx()
-        .collectFrom(utxos, using) // Tieu thu UTxO (Lay NFT co tren hop dong ve vi)
-        .addSigner(await lucid.wallet.address()) // Them chu ki tu nguoi ban
-        .attachSpendingValidator(from) // Tham chieu den hop dong, neu duoc xac nhan, moi dau ra se duoc thuc thi
+        .collectFrom(utxos, using) // Consume UTxO (retrieve NFTs on the contract to the wallet)
+        .addSigner(await lucid.wallet.address()) // Add a signature from the seller
+        .attachSpendingValidator(from) // Refers to the contract, if confirmed all output will be executed
         .complete();
 
-    // Ki giao dich
+    // Sign transaction
     const signedTx = await tx
         .sign()
         .complete();
-    // Gui giao dich len onchain
+    // Send transaction to onchain
     return signedTx.submit();
 }
 
-// Thuc thi lay lai tai san da ban co tren hop dong
+// Execution of taking back the sold property in the contract
 const txUnlock = await unlock(utxos, { from: validator, using: redeemer });
 
-// Thoi gian cho den khi giao dich duoc xac nhan tren Blockchain
+// Time until the transaction is confirmed on the blockchain
 await lucid.awaitTx(txUnlock);
 
 console.log(`NFT recovered from the contract
