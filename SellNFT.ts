@@ -1,4 +1,4 @@
-// import module tu cac thu vien
+// import modules from libraries
 import {
     Blockfrost,
     C,
@@ -12,7 +12,7 @@ import {
 } from "https://deno.land/x/lucid@0.8.4/mod.ts";
 import * as cbor from "https://deno.land/x/cbor@v1.4.1/index.js";
 
-// Khoi tao api lucid
+// Create the lucid api
 const lucid = await Lucid.new(
     new Blockfrost(
         "https://cardano-preview.blockfrost.io/api/v0",
@@ -21,10 +21,10 @@ const lucid = await Lucid.new(
     "Preview",
 );
 
-// Select vi
+// Select wallet
 const wallet = lucid.selectWalletFromSeed(await Deno.readTextFile("./owner.seed"));
 
-// Ham doc validator tu file plutus.json
+// Function to read validator from plutus.json file
 async function readValidator(): Promise<SpendingValidator> {
     const validator = JSON.parse(await Deno.readTextFile("plutus.json")).validators[0];
     return {
@@ -33,15 +33,15 @@ async function readValidator(): Promise<SpendingValidator> {
     };
 }
 
-// Doc validator va gan vao mot bien
+// Read the validator and assign it to a variable
 const validator = await readValidator();
 
-// Public key nguoi ban
+// Public key of the seller
 const ownerPublicKeyHash = lucid.utils.getAddressDetails(
     await lucid.wallet.address()
 ).paymentCredential.hash;
 
-// Public key nguoi tao ra NFT
+// Public key of the NFT creator
 const authorPublicKeyHash =
     lucid.utils.getAddressDetails("addr_test1qpkxr3kpzex93m646qr7w82d56md2kchtsv9jy39dykn4cmcxuuneyeqhdc4wy7de9mk54fndmckahxwqtwy3qg8pums5vlxhz")
         .paymentCredential.hash;
@@ -49,7 +49,7 @@ const authorPublicKeyHash =
 
 // --------------------------------------------------------------------------
 
-// Khoi tao doi tuong cua Datum
+// initialize the Datum object
 const Datum = Data.Object({
     policyId: Data.String,
     assetName: Data.String,
@@ -61,13 +61,13 @@ const Datum = Data.Object({
 
 type Datum = Data.Static<typeof Datum>;
 
-// Cac du lieu can cho truong datum (public key cua nguoi ban va tac gia o tren)
+// The data needed for the datum field (Public key of the seller and author above)
 const Price = 100000000n;
 const royalties = BigInt(parseInt(Price) * 1 / 100);
 const policyId = "f6d61e2b83e15ce8ca7645e21ea4e552cad719d36290d07b50477100";
 const assetName = "44656d61726b6574";
 
-// Truyen du lieu vao datum
+// Pass data into datum
 const datum = Data.to<Datum>(
     {
         policyId: policyId,
@@ -80,33 +80,33 @@ const datum = Data.to<Datum>(
     Datum
 );
 
-// NFT dung de ban
+// NFTs are for sale
 const NFT = policyId + assetName;
 console.log(NFT)
 
-// Ham khoa tai san
+// Asset locking function
 async function lock(NFT, { into, datum }): Promise<TxHash> {
-    // Doc dia chi hop dong tu bien validator
+    // Read the contract address from the validator variable
     const contractAddress = lucid.utils.validatorToAddress(into);
     console.log(contractAddress);
 
-    // Tao giao dich
+    // Create transaction
     const tx = await lucid
         .newTx()
-        .payToContract(contractAddress, { inline: datum }, { [NFT]: 1n }) // Gui NFT, datum len hop dong co dia chi da doc o tren
+        .payToContract(contractAddress, { inline: datum }, { [NFT]: 1n }) // Send NFT, datum to the contract with the address read above
         .complete();
 
-    // Ki giao dich
+    // Sign transaction
     const signedTx = await tx.sign().complete();
 
-    // Gui giao dich len onchain
+    // Send transactions to onchain
     return signedTx.submit();
 }
 
-// Khoa tai san len hop dong
+// Lock assets into contracts
 const txLock = await lock(NFT, { into: validator, datum: datum });
 
-// Thoi gian cho den khi giao dich duoc xac nhan tren Blockchain
+// Time until the transaction is confirmed on the Blockchain
 await lucid.awaitTx(txLock);
 
 console.log(`NFT locked into the contract
