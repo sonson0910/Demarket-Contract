@@ -64,6 +64,8 @@ validator {
           False -> {
 
             // Trading platform fees
+              // Our platform will collect a percentage of the value of the listed property, the formula is calculated as follows:
+                // Exchange fee = 1% of listed/transacted assets
             let demarket_fee: Int = demarket_pct * datum.price / 100
             
             // Search for output included in the transaction that satisfies the amount of money sent to the seller and must be sent to the correct address
