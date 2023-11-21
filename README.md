@@ -104,6 +104,16 @@ if datum.seller == datum.author {
 
 * Check the purpose of the transaction: Before going into the logic of the contract, we will check what the purpose of this transaction is, if it is `Spend`, the contract will go into the logic below, if not Translation will be rejected
 
+## Prevent security holes:
+* DEMARKET's smart contract was designed and after going through the development stages, our contract's safety has been greatly improved, bad guys cannot take away assets on the contract without without having to pay, we are very tightly bound on the outputs in the contract, from exchange fees, copyright fees to seller fees.
+
+## Features: Our contract allows users to securely execute the following functions:
+* Check the money output for the seller
+* Check the money output for the author
+* Check the money output for the exchange
+* Check the seller's signature before returning the property to the seller
+* Check the case if the author is the seller
+
 ## License
 
 The **Demarket SmartContract** is released under the Apache2 License. See the `LICENSE` file for more details.
