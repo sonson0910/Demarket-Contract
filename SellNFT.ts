@@ -66,6 +66,7 @@ const Price = 100000000n;
 const royalties = BigInt(parseInt(Price) * 1 / 100);
 const policyId = "f6d61e2b83e15ce8ca7645e21ea4e552cad719d36290d07b50477100";
 const assetName = "44656d61726b6574";
+const fee = royalties + BigInt(parseInt(Price) * 1 / 100);
 
 // Pass data into datum
 const datum = Data.to<Datum>(
@@ -85,7 +86,7 @@ const NFT = policyId + assetName;
 console.log(NFT)
 
 // Asset locking function
-async function lock(NFT, { into, datum }): Promise<TxHash> {
+async function lock(NFT, fee, { into, datum }): Promise<TxHash> {
     // Read the contract address from the validator variable
     const contractAddress = lucid.utils.validatorToAddress(into);
     console.log(contractAddress);
@@ -93,7 +94,7 @@ async function lock(NFT, { into, datum }): Promise<TxHash> {
     // Create transaction
     const tx = await lucid
         .newTx()
-        .payToContract(contractAddress, { inline: datum }, { [NFT]: 1n }) // Send NFT, datum to the contract with the address read above
+        .payToContract(contractAddress, { inline: datum }, { [NFT]: 1n, lovelace: fee }) // Submit NFT and floor + royalty fees to the contract
         .complete();
 
     // Sign transaction
@@ -104,7 +105,7 @@ async function lock(NFT, { into, datum }): Promise<TxHash> {
 }
 
 // Lock assets into contracts
-const txLock = await lock(NFT, { into: validator, datum: datum });
+const txLock = await lock(NFT, fee, { into: validator, datum: datum });
 
 // Time until the transaction is confirmed on the Blockchain
 await lucid.awaitTx(txLock);
