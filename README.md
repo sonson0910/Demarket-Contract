@@ -2,6 +2,8 @@
 
 The **Demarket SmartContract** is a smart contract that binds NFT buying and selling transactions on the NFT demarket exchange
 
+![snapedit_1695973681512](https://github.com/sonson0910/Demarket-Contract/assets/91943651/cd600320-99eb-49c0-96d2-0b20e6d5cf67)
+
 ## The main task of smart contracts
 * Protecting the interests of buyers and sellers: We protect the interests of buyers and sellers by checking the output of the transaction that the buyer initiates, specifically, we will check the amount of the buyer sent to the seller must be greater than or equal to the amount set by the seller and must be sent to the correct address of the seller, otherwise the transaction will be refused.
 
