@@ -94,7 +94,7 @@ async function lock(NFT, fee, { into, datum }): Promise<TxHash> {
     // Create transaction
     const tx = await lucid
         .newTx()
-        .payToContract(contractAddress, { inline: datum }, { [NFT]: 1n, lovelace: fee }) // Submit NFT and floor + royalty fees to the contract
+        .payToContract(contractAddress, { inline: datum }, { [NFT]: 1n, lovelace: fee }) // Submit NFT and exchange + royalty fees to the contract
         .complete();
 
     // Sign transaction
