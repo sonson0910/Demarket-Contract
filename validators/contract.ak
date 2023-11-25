@@ -99,7 +99,7 @@ validator {
                     }
                   )
                   
-                  // If more than 2 outputs exist, check again
+                  // If we have at least 2 outputs satisfying the royalty fee to the seller/author, check that at least one satisfies the price
                   if length(list_out) >= 2 {
                     
                     // Look for deals that satisfy the full amount the seller lists for their product
@@ -111,7 +111,7 @@ validator {
                       }
                     )
 
-                    // The contract will be accepted if the number of outputs sent to the seller checked in the list_seller variable is greater than or equal to one, otherwise the contract will reject the transaction.
+                    // If we found at least one output that satisfies the price constraint among the two >= to the royalty fee, then it means that the buyer did pay both the price and the royalty to the author/seller and that we can validate the transaction
                     length(list_seller) >= 1
 
                   }else{
