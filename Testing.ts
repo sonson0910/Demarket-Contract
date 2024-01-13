@@ -21,7 +21,28 @@ const lucid = await Lucid.new(
 );
 
 // const wallet = lucid.selectWalletFromPrivateKey(await Deno.readTextFile("./owner.sk"));
-const wallet = lucid.selectWalletFromSeed(await Deno.readTextFile("./demarket.seed"));
+const wallet = lucid.selectWalletFromSeed(await Deno.readTextFile("./owner.seed"));
+
+async function readValidator(): Promise<SpendingValidator> {
+    const validator = JSON.parse(await Deno.readTextFile("plutus.json")).validators[0];
+    return {
+        type: "PlutusV2",
+        script: toHex(cbor.encode(fromHex(validator.compiledCode))),
+    };
+}
+
+// Read the validator and assign it to a variable
+const validator = await readValidator();
+
+const contractAddress = lucid.utils.validatorToAddress(validator);
+
+console.log("Validator: " + contractAddress)
+
+// const payment_credential = lucid.utils.getAddressDetails(
+//     contractAddress
+// ).paymentCredential.hash;
+
+// console.log(payment_credential)
 
 let addr = C.Address.from_bech32(await lucid.wallet.address())
 let base_addr = C.BaseAddress.from_address(addr)
@@ -44,13 +65,19 @@ const payment_credential = lucid.utils.getAddressDetails(
 
 const stake_credential = lucid.utils.getAddressDetails(
     await lucid.wallet.address()
-).stakeCredential
+).stakeCredential;
 
 console.log(payment_credential)
 // 3061bacb0f06860c0b51cc3a5faf8965e476853462e0bc6768acba88
 
 console.log(stake_credential)
 
+let winter_addr = { type: "Key", hash: "6c61c6c1164c58ef55d007e71d4da6b6d55b175c18591225692d3ae3" }
+
 let address = lucid.utils.credentialToAddress(payment_credential, stake_credential)
+let addressNoStake = lucid.utils.credentialToAddress(payment_credential)
+let winter = lucid.utils.credentialToAddress(winter_addr)
 
 console.log(address)
+console.log(addressNoStake)
+console.log("winter addr:" + winter)
