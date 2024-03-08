@@ -106,6 +106,37 @@ if datum.seller == datum.author {
 
 * Check the purpose of the transaction: Before going into the logic of the contract, we will check what the purpose of this transaction is, if it is `Spend`, the contract will go into the logic below, if not Translation will be rejected
 
+## Installation Instructions
+### First, please clone this source code 
+`git clone https://github.com/sonson0910/Demarket-Contract.git`
+### If you haven't installed **deno** yet, install it
+* Windows 
+`irm https://deno.land/install.ps1 | iex`
+* Ubuntu
+`curl -fsSL https://deno.land/install.sh | sh`
+* MacOS
+`curl -fsSL https://deno.land/install.sh | sh`
+### Install Aiken
+* You can see installation instructions here: https://aiken-lang.org/installation-instructions
+### Mint NFT as a test transaction
+* In our test wallet, the `owner.seed` file already has ada and NFT inside. Additionally, you can mint additional NFT at: `https://demarket.vn/mint` and transfer it to `owner.seed` wallet
+### Rename the parameters in the SellNFT.ts or SellNFTmore.ts file
+* You can change the value of some fields such as price, author wallet address, etc. But you must be careful to change the value of the policyID field and AssetName field of the NFT you just minted.
+### Run a test of locking an NFT onto a contract
+* Please run the command  
+`deno run --allow-net --allow-read --allow-env SellNFT.ts`
+### Rename the parameters in the BuyerNFT.ts or BuyerNFTmore.ts file
+* You must be careful to change the value of the policyID field and AssetName field, the price fields of the NFT you just locked into the contract.
+### Run an NFT purchase test
+* Please run the command  
+`deno run --allow-net --allow-read --allow-env BuyerNFT.ts`
+### Rename the parameters in the Refund.ts file
+* You must be careful to change the value of the policyID field and AssetName field of the NFT you just locked into the contract to get the NFT back to your wallet
+* **Note** that it can only be done when you have not yet taken the action of purchasing the NFT.
+### Run a test to get your assets back to your wallet from the contract
+* Please run the command   
+`deno run --allow-net --allow-read --allow-env Refund.ts.ts`
+
 ## Prevent security holes:
 * DEMARKET's smart contract was designed and after going through the development stages, our contract's safety has been greatly improved, bad guys cannot take away assets on the contract without without having to pay, we are very tightly bound on the outputs in the contract, from exchange fees, copyright fees to seller fees.
 
